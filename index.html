@@ -1,0 +1,1551 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>لعبة المزاد — ألعاب -𖤍|𝐑𝐄𝐃𝐒𝐖𝐎𝐑𝐃</title>
+<style>
+  :root{
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --accent: #3b82f6;
+    --muted: #64748b;
+    --glass: rgba(59, 130, 246, 0.05);
+    --panel: #ffffff;
+    --success: #10b981;
+    --danger: #ef4444;
+    --gold: #f59e0b;
+    --light-border: #e2e8f0;
+    font-family: "Segoe UI", Tahoma, Arial, "Noto Naskh Arabic", sans-serif;
+  }
+  
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 60%, #f1f5f9 100%);
+    color: #1e293b;
+    direction: rtl;
+    transition: all 0.3s ease;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 28px auto;
+    padding: 18px;
+  }
+  
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--light-border);
+  }
+  
+  header h1 {
+    font-size: 24px;
+    margin: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  
+  header p {
+    margin: 6px 0 0 0;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  
+  .panel {
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--light-border);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .panel:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  }
+  
+  .settings-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  
+  label {
+    display: block;
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  input[type="number"], input[type="text"], select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--light-border);
+    background: #ffffff;
+    color: #334155;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+  
+  input[type="number"]:focus, input[type="text"]:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  
+  .btn {
+    background: linear-gradient(135deg, var(--accent) 0%, #2563eb 100%);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+  }
+  
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+  }
+  
+  .btn.secondary {
+    background: transparent;
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    box-shadow: none;
+  }
+  
+  .btn.secondary:hover {
+    background: rgba(59, 130, 246, 0.05);
+    transform: translateY(-2px);
+  }
+  
+  .small {
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+  
+  .muted {
+    color: var(--muted);
+    font-size: 14px;
+  }
+  
+  .game-area {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 24px;
+    margin-top: 24px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeInUp 0.5s ease forwards;
+  }
+  
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .card {
+    background: var(--card);
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid var(--light-border);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+  }
+  
+  .card:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  }
+  
+  .item-title {
+    font-size: 22px;
+    margin: 0 0 8px 0;
+    color: #1e293b;
+    font-weight: 700;
+  }
+  
+  .item-meta {
+    color: var(--accent);
+    font-size: 15px;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  
+  .item-desc {
+    background: var(--glass);
+    padding: 16px;
+    border-radius: 12px;
+    color: #475569;
+    font-size: 15px;
+    line-height: 1.6;
+    border: 1px solid rgba(59, 130, 246, 0.1);
+  }
+  
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .copy-btn {
+    background: #f8fafc;
+    border: 2px solid var(--light-border);
+    color: var(--accent);
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  .copy-btn:hover {
+    background: #f1f5f9;
+    border-color: var(--accent);
+  }
+  
+  .gear {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    background: var(--panel);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--light-border);
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+  }
+  
+  .gear:hover {
+    transform: rotate(30deg);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    border-color: var(--accent);
+  }
+  
+  .gear svg {
+    fill: var(--accent);
+    transition: fill 0.3s ease;
+  }
+  
+  .players-list {
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    padding: 20px;
+    border-radius: 14px;
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid var(--light-border);
+  }
+  
+  .player-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    background: white;
+    border: 1px solid var(--light-border);
+    transition: all 0.2s ease;
+  }
+  
+  .player-item:hover {
+    transform: translateX(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
+  }
+  
+  .player-name {
+    font-weight: 700;
+    color: #1e293b;
+  }
+  
+  .player-balance {
+    color: var(--muted);
+    font-weight: 500;
+  }
+  
+  .result-box {
+    background: linear-gradient(90deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.04));
+    padding: 16px;
+    border-radius: 12px;
+    margin-top: 16px;
+    color: #065f46;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+  
+  .danger-box {
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.08), rgba(255, 255, 255, 0.04));
+    padding: 16px;
+    border-radius: 12px;
+    margin-top: 16px;
+    color: #991b1b;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+  
+  footer {
+    margin-top: 32px;
+    color: var(--muted);
+    font-size: 14px;
+    text-align: center;
+    padding-top: 20px;
+    border-top: 2px solid var(--light-border);
+  }
+  
+  .copy-note {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid var(--light-border);
+  }
+  
+  hr {
+    border: none;
+    border-top: 2px solid var(--light-border);
+    margin: 20px 0;
+  }
+  
+  .copy-result-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 13px;
+    margin-top: 12px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .copy-result-btn:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
+  }
+  
+  /* تصميم متجاوب للهواتف */
+  @media (max-width: 980px) {
+    .game-area {
+      grid-template-columns: 1fr;
+    }
+    
+    .settings-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .gear {
+      top: 16px;
+      left: 16px;
+      width: 44px;
+      height: 44px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      padding: 12px;
+      margin: 16px auto;
+    }
+    
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    header h1 {
+      font-size: 20px;
+    }
+    
+    header p {
+      font-size: 13px;
+    }
+    
+    .panel {
+      padding: 18px;
+      border-radius: 14px;
+    }
+    
+    .settings-grid {
+      gap: 16px;
+    }
+    
+    .card {
+      padding: 18px;
+      border-radius: 14px;
+    }
+    
+    .item-title {
+      font-size: 18px;
+    }
+    
+    .item-meta {
+      font-size: 14px;
+    }
+    
+    .item-desc {
+      padding: 14px;
+      font-size: 14px;
+    }
+    
+    .controls {
+      flex-direction: column;
+    }
+    
+    .controls input[type="number"] {
+      width: 100%;
+    }
+    
+    .row {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 14px;
+      font-size: 15px;
+    }
+    
+    .players-list {
+      padding: 16px;
+    }
+    
+    .player-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    
+    .player-item > div:last-child {
+      width: 100%;
+      text-align: right;
+    }
+    
+    input[type="number"], input[type="text"], select {
+      padding: 14px;
+      font-size: 16px; /* أفضل للشاشات اللمسية */
+    }
+    
+    /* تعديلات خاصة للهواتف */
+    #gameArea > div:first-child {
+      order: 2;
+    }
+    
+    #gameArea > div:last-child {
+      order: 1;
+    }
+    
+    .gear {
+      top: 12px;
+      left: 12px;
+      width: 40px;
+      height: 40px;
+    }
+    
+    .gear svg {
+      width: 18px;
+      height: 18px;
+    }
+    
+    /* تحسين حجم النصوص للقراءة على الهواتف */
+    #marketPrice, #openingPrice {
+      font-size: 20px !important;
+    }
+    
+    .copy-result-btn {
+      width: 100%;
+      justify-content: center;
+      padding: 12px;
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .container {
+      padding: 8px;
+    }
+    
+    header h1 {
+      font-size: 18px;
+    }
+    
+    .panel {
+      padding: 16px;
+    }
+    
+    .card {
+      padding: 16px;
+    }
+    
+    .item-title {
+      font-size: 16px;
+    }
+    
+    #marketPrice {
+      font-size: 18px !important;
+    }
+    
+    #openingPrice {
+      font-size: 16px !important;
+    }
+    
+    .btn {
+      padding: 12px;
+    }
+  }
+  
+  /* تحسينات للشاشات الصغيرة جداً */
+  @media (max-width: 360px) {
+    .container {
+      padding: 6px;
+    }
+    
+    header {
+      margin-bottom: 16px;
+    }
+    
+    .panel, .card {
+      padding: 14px;
+    }
+    
+    .item-title {
+      font-size: 15px;
+    }
+    
+    .item-desc {
+      font-size: 13px;
+      padding: 12px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="gear" id="openSettings" title="إعدادات المزاد">
+  <svg width="20" height="20" viewBox="0 0 24 24">
+    <path d="M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7zm8.94-2.5l-1.2-.7a7.9 7.9 0 0 0 0-1.6l1.2-.7a.5.5 0 0 0 .2-.6l-1.1-1.9a.5.5 0 0 0-.6-.2l-1.4.6a8.1 8.1 0 0 0-1.4-.8l-.2-1.5a.5.5 0 0 0-.5-.4h-2.2a.5.5 0 0 0-.5.4l-.2 1.5c-.5.2-1 .5-1.4.8l-1.4-.6a.5.5 0 0 0-.6.2L3.16 8.5a.5.5 0 0 0 .2.6l1.2.7c0 .5 0 1 .1 1.6l-1.2.7a.5.5 0 0 0-.2.6l1.1 1.9c.1.2.3.3.6.2l1.4-.6c.4.3.9.6 1.4.8l.2 1.5c.05.2.2.4.5.4h2.2c.3 0 .45-.2.5-.4l.2-1.5c.5-.2 1-.5 1.4-.8l1.4.6c.2.1.4 0 .6-.2l1.1-1.9a.5.5 0 0 0-.2-.6z"/>
+  </svg>
+</div>
+
+<div class="container">
+  <header>
+    <div>
+      <h1>لعبة المزاد</h1>
+      <p>موقع: ألعاب -𖤍|𝐑𝐄𝐃𝐒𝐖𝐎𝐑𝐃 — مزاد افتراضي على قطع حقيقية</p>
+    </div>
+    <div class="muted">واجهة إعداد وتشغيل المزاد</div>
+  </header>
+
+  <!-- إعدادات المضيف -->
+  <div class="panel" id="settingsPanel">
+    <h3 style="margin-top: 0; color: var(--accent); margin-bottom: 20px;">إعدادات المزاد</h3>
+    <div class="settings-grid">
+      <div>
+        <label>عدد اللاعبين أو الفرق</label>
+        <input type="number" id="playersCount" min="0" placeholder="مثال: 4" value="4">
+        <div style="margin-top: 8px;">
+          <button class="btn secondary small" id="setupPlayerNames" style="width: 100%;">👤 إعداد أسماء اللاعبين</button>
+        </div>
+      </div>
+      <div>
+        <label>عدد العناصر المعروضة</label>
+        <input type="number" id="itemsCount" min="1" placeholder="مثال: 30" value="20">
+      </div>
+      <div>
+        <label>الميزانية لكل لاعب</label>
+        <input type="number" id="budgetPerPlayer" min="0" placeholder="مثال: 50000" value="50000">
+      </div>
+
+      <div>
+        <label>توليد ميزانية تلقائيًا حسب العناصر المعروضة</label>
+        <select id="autoBudgetMode">
+          <option value="no">لا — استخدم الميزانية المدخلة</option>
+          <option value="yes">نعم — احسب تلقائيًا</option>
+        </select>
+      </div>
+
+      <div>
+        <label>نسبة سعر افتتاح المزاد الافتراضية</label>
+        <input type="number" id="openingPercent" min="10" max="100" value="65"> 
+      </div>
+
+      <div>
+        <label>إدارة المزاد</label>
+        <div class="row">
+          <button class="btn" id="startBtn">🚀 بدء المزاد</button>
+          <button class="btn secondary" id="loadSample">📦 تحميل عيّنة سريعة</button>
+        </div>
+      </div>
+    </div>
+    <p class="copy-note" style="margin-top: 20px;">
+      ملاحظة: يمكنك فتح الإعدادات أثناء اللعب بالنقر على أيقونة الترس أعلى اليسار.
+    </p>
+  </div>
+
+  <!-- منطقة اللعبة -->
+  <div class="game-area" id="gameArea" style="display: none">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 250px;">
+          <h2 class="item-title" id="itemName">—</h2>
+          <div class="item-meta" id="itemModel">موديل —</div>
+        </div>
+        <div style="text-align: left; background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid var(--light-border); margin-top: 12px; width: 100%;">
+          <div class="row" style="justify-content: space-between; margin-bottom: 8px;">
+            <div>
+              <div class="muted">السعر الحقيقي في السوق</div>
+              <div style="font-weight: 800; color: var(--accent); font-size: 24px; margin: 8px 0;" id="marketPrice">— $</div>
+            </div>
+            <div>
+              <div class="muted">سعر افتتاح المزاد</div>
+              <div style="font-weight: 700; color: #3b82f6; font-size: 20px;" id="openingPrice">— $</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="item-desc" id="itemDetails" style="margin-top: 16px; margin-bottom: 20px;">
+        تفاصيل القطعة ستظهر هنا.
+      </div>
+
+      <div class="controls">
+        <button class="copy-btn" id="copyItemBtn">📋 نسخ وصف القطعة</button>
+        <button class="btn secondary" id="toggleShowMarket">👁️ إظهار/إخفاء السعر الحقيقي</button>
+      </div>
+      <div class="copy-note">
+        النص المنسوخ يتضمن ترويسة الموقع وتفاصيل القطعة كما في المثال.
+      </div>
+
+      <hr>
+
+      <div>
+        <label>حدد اللاعب الفائز</label>
+        <select id="winnerSelect" style="margin-top: 8px; width: 100%;">
+          <option value="">-- اختر لاعباً --</option>
+        </select>
+      </div>
+
+      <div style="margin-top: 20px;" class="row">
+        <div style="flex: 1;">
+          <label>السعر الذي دفعه الفائز (بالدولار)</label>
+          <input type="number" id="paidPrice" min="0" placeholder="مثال: 13000" style="width: 100%;">
+        </div>
+        <div style="align-self: end; width: 100%;">
+          <button class="btn" id="settleBtn" style="width: 100%;">✅ حساب وتطبيق الصفقة</button>
+        </div>
+      </div>
+
+      <div id="resultArea" style="margin-top: 20px;"></div>
+
+      <div style="display: flex; justify-content: space-between; margin-top: 24px; flex-wrap: wrap; gap: 10px;">
+        <button class="btn secondary" id="prevBtn" style="flex: 1;">⬅️ السابق</button>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex: 1;">
+          <span id="currentItemNumber" style="color: var(--accent); font-weight: 600;">0/0</span>
+          <button class="btn" id="nextBtn" style="flex: 1;">التالي ➡️</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- لوحة اللاعبين -->
+    <div>
+      <div class="card players-list">
+        <h3 style="margin-top: 0; color: var(--accent); margin-bottom: 16px;">قائمة اللاعبين ورصيدهم</h3>
+        <div id="playersContainer">
+          <div style="text-align: center; padding: 20px; color: var(--muted);">
+            لا يوجد لاعبين حالياً. أضف لاعبين يدوياً أو اضبط الإعدادات.
+          </div>
+        </div>
+        <div style="margin-top: 20px;">
+          <label>أضف لاعب جديد</label>
+          <div class="row" style="margin-top: 8px;">
+            <input type="text" id="newPlayerName" placeholder="اسم اللاعب" style="flex: 1;">
+            <input type="number" id="newPlayerBudget" placeholder="رصيد ابتدائي" value="50000" style="width: 120px;">
+            <button class="btn small" id="addPlayerBtn">➕ إضافة</button>
+          </div>
+        </div>
+        <div style="margin-top: 16px;">
+          <button class="btn secondary small" id="editPlayerNames" style="width: 100%;">✏️ تعديل أسماء اللاعبين</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 16px;">
+        <h4 style="margin: 0 0 12px 0; color: var(--accent);">📊 إحصائيات سريعة</h4>
+        <div class="muted" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--light-border);">
+          <span>العناصر المتبقية:</span>
+          <span style="font-weight: 700; color: var(--accent);" id="remainingCount">0</span>
+        </div>
+        <div class="muted" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--light-border);">
+          <span>إجمالي اللاعبين:</span>
+          <span style="font-weight: 700; color: var(--accent);" id="totalPlayers">0</span>
+        </div>
+        <div class="muted" style="display: flex; justify-content: space-between; padding: 8px 0;">
+          <span>إجمالي العناصر:</span>
+          <span style="font-weight: 700; color: var(--accent);" id="totalItems">0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>© لعبة المزاد — ألعاب -𖤍|𝐑𝐄𝐃𝐖𝐎𝐑𝐃</footer>
+</div>
+
+<!-- نافذة تعديل أسماء اللاعبين -->
+<div id="playerNamesModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 20px;">
+  <div class="card" style="max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto;">
+    <h3 style="margin-top: 0; color: var(--accent); margin-bottom: 20px;">👤 إعداد أسماء اللاعبين</h3>
+    <div id="playerNamesContainer">
+      <!-- سيتم إضافة حقول أسماء اللاعبين هنا -->
+    </div>
+    <div style="display: flex; justify-content: space-between; margin-top: 24px; gap: 10px;">
+      <button class="btn secondary" id="cancelPlayerNames" style="flex: 1;">إلغاء</button>
+      <button class="btn" id="savePlayerNames" style="flex: 1;">💾 حفظ الأسماء</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// -------------------- بيانات العناصر الأساسية --------------------
+const ITEMS = [
+  // ساعات فاخرة وميسورة
+  { name: "ساعة رولكس جي إم تي ماستر 2 \"بيبسي\"", model: "موديل 2024", details: "إطار أزرق/أحمر، فولاذ أويستر ستيل، حركة أوتوماتيكية", marketPrice: 24000 },
+  { name: "ساعة رولكس دايتونا كرونوغراف", model: "موديل 2023", details: "فولاذ، مينا أبيض، كاليبر 4130", marketPrice: 28000 },
+  { name: "ساعة رولكس صبمارينر تاريخ", model: "موديل 2022", details: "غوص 300م، سير أويستر، إطار سيراميك أسود", marketPrice: 13000 },
+  { name: "باتيك فيليب نوتيلوس 5711", model: "موديل 2020", details: "فولاذ، مينا أزرق مخطط، أيقونية نادرة", marketPrice: 120000 },
+  { name: "باتيك فيليب أكوانوت 5167A", model: "موديل 2022", details: "فولاذ، سير مطاط، تصميم رياضي أنيق", marketPrice: 42000 },
+  { name: "أوديمار بيغيه رويال أوك", model: "15500ST موديل 2021", details: "فولاذ، مينا تابيسري، أيقونة تصميم", marketPrice: 48000 },
+  { name: "أوديمار بيغيه رويال أوك أوفشور", model: "موديل 2022", details: "كرونوغراف ضخم، مقاومة 100م", marketPrice: 45000 },
+  { name: "أوميغا سبيدماستر \"مون ووتش\"", model: "بروفيشنال", details: "كرونوغراف يدوي، تراث ناسا", marketPrice: 7000 },
+  { name: "أوميغا سيماستر دايفر 300م", model: "موديل 2022", details: "غوص، إطار سيراميك، صمام هيليوم", marketPrice: 5500 },
+  { name: "تاغ هوير كاريرا كرونو", model: "موديل 2023", details: "كرونوغراف رياضي، حركة أوتوماتيكية", marketPrice: 4500 },
+  { name: "هوبلو بيغ بانغ", model: "44مم موديل 2021", details: "تصميم جريء، خليط مواد (سيراميك/تيتانيوم)", marketPrice: 14000 },
+  { name: "لانجيه أند زونه (A. Lange & Söhne)", model: "موديل 2020", details: "تصنيع ألماني راقٍ، مينا أنيق", marketPrice: 32000 },
+  { name: "بريتلينغ نافيتايمر", model: "موديل 2022", details: "طيران، مقياس انزلاق، كرونوغراف", marketPrice: 6500 },
+  
+  // ساعات اقتصادية ومعروفة
+  { name: "سيكو 5 أوتوماتيك", model: "موديل 2023", details: "حركة ميكانيكية، قيمة ممتازة", marketPrice: 150 },
+  { name: "سيكو بروسبكس \"ساموراي\"", model: "موديل 2021", details: "غوص 200م، إطار بارز", marketPrice: 500 },
+  { name: "كاسيو إف 91 دبليو", model: "موديل 2024", details: "رقمية كلاسيكية، مقاومة للماء", marketPrice: 20 },
+  { name: "كاسيو جي-شوك كلاسيك", model: "موديل 2023", details: "مقاومة صدمات، متعددة الوظائف", marketPrice: 120 },
+  { name: "تايمكس ويك إندر", model: "موديل 2022", details: "تصميم بسيط، حزام قابل للتبديل", marketPrice: 50 },
+  { name: "تيسو لو جين", model: "موديل 2023", details: "أوتوماتيك، زجاج ياقوت", marketPrice: 700 },
+  { name: "سواتش كلاسيك", model: "موديل 2023", details: "تصميم بلاستيكي خفيف، ألوان متنوعة", marketPrice: 80 },
+  { name: "فوسيل ميكانيكية بسيطة", model: "موديل 2022", details: "تصميم عصري، حركة كوارتز/أوتوماتيك", marketPrice: 120 },
+  { name: "كونفيرس ساعة رياضية بسيطة", model: "موديل 2024", details: "مقاومة للماء، حزام سيليكون", marketPrice: 35 },
+  { name: "أرماني إكستشينج كوارتز", model: "موديل 2023", details: "مينا أنيق، حزام جلد صناعي", marketPrice: 150 },
+  
+  // حقائب وعلامات تجارية فاخرة
+  { name: "هيرميس بيركين 30 جلد التمساح", model: "موديل 2022", details: "مادة نادرة، تشطيب فاخر، يدوي الصنع", marketPrice: 35000 },
+  { name: "هيرميس بيركين 30 جلد العجل", model: "موديل 2023", details: "يدوي الصنع، جلد فاخر، إغلاق قفل", marketPrice: 15000 },
+  { name: "هيرميس كيلي 28", model: "موديل 2023", details: "كلاسيكية بمقبض علوي، حزام كتف", marketPrice: 14000 },
+  { name: "شانيل كلاسيك فلاب وسط", model: "موديل 2024", details: "جلد كمش، سلسلة مزدوجة، شعار CC", marketPrice: 8000 },
+  { name: "شانيل بوياكيت", model: "موديل 2023", details: "تصميم عصري، جلد ناعم", marketPrice: 5500 },
+  { name: "لويس فيتون كييبول 55 مونوجرام", model: "موديل 2024", details: "حقيبة سفر، قماش مونوجرام", marketPrice: 2500 },
+  { name: "لويس فيتون نيفرفول MM", model: "موديل 2023", details: "حقيبة يومية، مبطنة، حقيبة داخلية", marketPrice: 1900 },
+  { name: "ديور ليدي ديور متوسط", model: "موديل 2022", details: "جلد مبطن، حرفية فرنسية", marketPrice: 5200 },
+  { name: "ديور سادل", model: "موديل 2023", details: "تصميم سرج، حزام قابل للتعديل", marketPrice: 3900 },
+  { name: "غوتشي GG مارمونت متوسط", model: "موديل 2024", details: "جلد، شعار GG ذهبي", marketPrice: 2500 },
+  { name: "غوتشي سوهو ديسكو", model: "موديل 2023", details: "كروس بودي، شعار محفور", marketPrice: 1500 },
+  { name: "برادا سافيانّو توت", model: "موديل 2024", details: "جلد سافيانّو، متين", marketPrice: 2200 },
+  { name: "فندي باغيت كلاسيك", model: "موديل 2022", details: "حجم صغير، قفل FF", marketPrice: 2600 },
+  { name: "سان لوران كيت صغير", model: "موديل 2023", details: "جلد ناعم، شعار YSL", marketPrice: 2400 },
+  
+  // حقائب اقتصادية ومعروفة
+  { name: "مايكل كورس جيت سِت توت", model: "موديل 2024", details: "حقيبة يومية عملية", marketPrice: 250 },
+  { name: "كوتش تابَّر توت", model: "موديل 2023", details: "قماش وجلد، جودة جيدة", marketPrice: 220 },
+  { name: "هيرشل ليتل أمريكا", model: "موديل 2024", details: "حقيبة ظهر أيقونية، مشابك", marketPrice: 100 },
+  { name: "زارا حقيبة يد جلد صناعي", model: "موديل 2024", details: "سعر مناسب، تصميم عصري", marketPrice: 40 },
+  { name: "إتش آند إم حقيبة كروس جلد صناعي", model: "موديل 2024", details: "خفيفة وعملية", marketPrice: 30 },
+  { name: "لونشان لو بلْياج كبير", model: "موديل 2023", details: "نايلون قابل للطي، مقاوم", marketPrice: 140 },
+  { name: "مانجو حقيبة كتف بسيطة", model: "موديل 2024", details: "تصميم عصري، جلد صناعي", marketPrice: 45 },
+  { name: "أونلي حقيبة كاجوال", model: "موديل 2023", details: "قماش متين، جيوب متعددة", marketPrice: 35 },
+  { name: "إيكيا حقيبة تسوق قابلة للطي", model: "موديل 2024", details: "خفة وسهولة حمل", marketPrice: 5 },
+  { name: "فانز حقيبة ظهر مدرسية", model: "موديل 2023", details: "قماش متين، سعة متوسطة", marketPrice: 60 },
+  
+  // سيارات أيقونية وفاخرة
+  { name: "فيراري 488 جي تي بي", model: "موديل 2020", details: "محرك V8 توربو، أداء عالٍ", marketPrice: 250000 },
+  { name: "لامبورغيني أفينتادور SVJ", model: "موديل 2022", details: "V12، ألياف كربون، حزمة هوائية", marketPrice: 600000 },
+  { name: "بورشه 911 كاريرا", model: "موديل 2023", details: "أيقونة رياضية، محرك بوكسر", marketPrice: 120000 },
+  { name: "مرسيدس بنز 300SL جناح النورس", model: "موديل 1955", details: "كلاسيكية نادرة، أبواب جناحية", marketPrice: 1500000 },
+  { name: "رولز رويس فانتوم", model: "موديل 2022", details: "فخامة قصوى، هدوء المقصورة", marketPrice: 500000 },
+  { name: "بنتلي كونتيننتال جي تي", model: "موديل 2021", details: "جراند تورر فاخر", marketPrice: 220000 },
+  { name: "ماكلارين 720S", model: "موديل 2020", details: "هيكل خفيف، تسارع مذهل", marketPrice: 300000 },
+  { name: "أستون مارتن دي بي11", model: "موديل 2021", details: "تصميم راقٍ، محرك V8/V12", marketPrice: 200000 },
+  
+  // سيارات اقتصادية ومعروفة
+  { name: "تسلا موديل S بلايد", model: "موديل 2024", details: "تسارع فائق، كهربائية بالكامل", marketPrice: 110000 },
+  { name: "تويوتا كورولا", model: "موديل 2022", details: "اقتصادية موثوقة، سيدان", marketPrice: 18000 },
+  { name: "هوندا سيفيك", model: "موديل 2021", details: "شعبية واسعة، كفاءة عالية", marketPrice: 16000 },
+  { name: "فولكسفاغن غولف", model: "موديل 2020", details: "هاتشباك عملية، ألمانية", marketPrice: 14000 },
+  { name: "فورد موستانغ جي تي", model: "موديل 2022", details: "أمريكية أيقونية، V8", marketPrice: 55000 },
+  { name: "شيفروليه كمارو إس إس", model: "موديل 2021", details: "عضلات أمريكية، أداء قوي", marketPrice: 52000 },
+  { name: "نيسان جي تي آر", model: "موديل 2019", details: "\"غودزيلا\"، أداء خارق", marketPrice: 90000 },
+  { name: "دودج تشالنجر هيلكات", model: "موديل 2020", details: "قوة هائلة، تصميم كلاسيكي", marketPrice: 75000 },
+  { name: "لاند روفر رينج روفر", model: "موديل 2022", details: "فخامة SUV، راحة عالية", marketPrice: 130000 },
+  { name: "جيب رانجلر روبيكون", model: "موديل 2023", details: "قدرات طرق وعرة، أيقوني", marketPrice: 55000 },
+  
+  // مجوهرات وأحجار كريمة فاخرة
+  { name: "خاتم كارتييه لَف ذهب أبيض مع ألماس", model: "موديل 2023", details: "تصميم أيقوني، مسامير مميزة", marketPrice: 10000 },
+  { name: "سوار كارتييه لَف ذهب أصفر", model: "موديل 2024", details: "قفل لولبي، وزن فاخر", marketPrice: 8000 },
+  { name: "قلادة تيفاني \"مفتاح\" ذهب أبيض وألماس", model: "موديل 2022", details: "تصميم مفتاح، سلسلة رقيقة", marketPrice: 7500 },
+  { name: "أقراط هاري وينستون \"كلستر\" ألماس", model: "موديل 2021", details: "ترصيع كثيف، بريق عالٍ", marketPrice: 20000 },
+  { name: "خاتم سوليتير ألماس 1 قيراط", model: "موديل 2023", details: "قطع مثالي، ذهب أبيض", marketPrice: 6000 },
+  { name: "عقد لؤلؤ أكيا طبيعي", model: "موديل 2022", details: "حبات متجانسة، غلق ذهبي", marketPrice: 3500 },
+  { name: "زمرد كولومبي 2 قيراط", model: "موديل 2021", details: "لون عميق، شهادة مخبرية", marketPrice: 9000 },
+  { name: "ياقوت أحمر بورما 1.5 قيراط", model: "موديل 2020", details: "ندرة عالية، وضوح جيد", marketPrice: 12000 },
+  { name: "ياقوت أزرق كشميري 2 قيراط", model: "موديل 2019", details: "لون ملكي، مرغوب جامعًا", marketPrice: 18000 },
+  { name: "سوار فان كليف \"الحظ\"", model: "موديل 2024", details: "ورود خماسية، عقيق وزخارف", marketPrice: 5200 },
+  { name: "بروش شانيل لؤلؤ وكريستال", model: "موديل 2023", details: "شعار أيقوني، لمسة كلاسيكية", marketPrice: 1200 },
+  { name: "خاتم بولغاري \"بي.zero\" ذهب", model: "موديل 2022", details: "حلقات متداخلة، طابع عصري", marketPrice: 4500 },
+  { name: "عقد بوشرون \"سيربان\"", model: "موديل 2021", details: "تصميم ثعبان، أحجار دقيقة", marketPrice: 8000 },
+  { name: "سوار شوبارد \"قلب سعيد\"", model: "موديل 2023", details: "ألماسات متحركة داخل قلب", marketPrice: 7000 },
+  
+  // مجوهرات اقتصادية وإكسسوارات
+  { name: "خاتم ذهب عيار 21 بسيط", model: "موديل 2024", details: "تصميم كلاسيكي، وزن متوسط", marketPrice: 450 },
+  { name: "سلسلة فضة ستيرلنغ", model: "موديل 2024", details: "تصميم بسيط، ملمس لامع", marketPrice: 70 },
+  { name: "خاتم ستانلس ستيل عصري", model: "موديل 2024", details: "مقاوم للتآكل، غير مسبب للحساسية", marketPrice: 25 },
+  { name: "سوار خرز حجري طبيعي", model: "موديل 2024", details: "خرز مات، مطاط متين", marketPrice: 15 },
+  { name: "خاتم عقيق يماني", model: "موديل 2023", details: "حجر عقيق طبيعي، صياغة فضة", marketPrice: 120 },
+  { name: "مسبحة حجر بركاني", model: "موديل 2024", details: "خرز أسود خفيف، لمسة روحية", marketPrice: 40 },
+  { name: "أقراط فضة بسيطة", model: "موديل 2024", details: "تصميم يومي، وزن خفيف", marketPrice: 30 },
+  { name: "سوار جلد بسيط", model: "موديل 2023", details: "جلد طبيعي/صناعي، مشبك معدني", marketPrice: 20 },
+  
+  // أدوات موسيقية فاخرة
+  { name: "كمان ستراديفاريوس أصلي", model: "حوالي 1710", details: "تاريخي نادر، صوت أسطوري", marketPrice: 1000000 },
+  { name: "بيانو ستاينواي آند صنز جراند D-274", model: "موديل 2022", details: "حفلات، صوت عميق، يدوي الصنع", marketPrice: 150000 },
+  { name: "بيانو ياماها جراند C3X", model: "موديل 2023", details: "استوديو، صوت متوازن", marketPrice: 35000 },
+  { name: "غيتار غيبسون ليس بول ستاندرد", model: "موديل 2021", details: "روك كلاسيكي، خشب ماهوغاني", marketPrice: 3000 },
+  { name: "غيتار فيندر ستراتوكاستر أمريكان برو", model: "موديل 2022", details: "نغمة براقة، 3 بيك أب", marketPrice: 1600 },
+  { name: "عود عربي محترف", model: "موديل 2023", details: "صناعة يدوية، خشب جوز", marketPrice: 1200 },
+  { name: "قانون تركي احترافي", model: "موديل 2022", details: "أوت نحاسية، زخارف", marketPrice: 2000 },
+  { name: "ناي مصري احترافي", model: "موديل 2023", details: "قصب طبيعي، ستة ثقوب", marketPrice: 300 },
+  { name: "دف جلدي مطرّز", model: "موديل 2024", details: "إطار خشبي، صوت دافئ", marketPrice: 150 },
+  { name: "كيبورد رولاند FP-30X", model: "موديل 2023", details: "مفاتيح مطاطية، أصوات متعددة", marketPrice: 900 },
+  { name: "ميكروفون نيومان U87", model: "موديل 2022", details: "تسجيل احترافي، حساسية عالية", marketPrice: 3200 },
+  
+  // أدوات موسيقية اقتصادية للمبتدئين
+  { name: "آلة كمان طلابي", model: "موديل 2024", details: "جودة مبتدئين، حقيبة وقوس", marketPrice: 200 },
+  { name: "غيتار كلاسيكي للمبتدئين", model: "موديل 2024", details: "أوت نايلون، حجم 4/4", marketPrice: 120 },
+  { name: "يوكوليلي صنوبر صغير", model: "موديل 2023", details: "مناسب للمبتدئين، حزام", marketPrice: 60 },
+  { name: "هارمونيكا كيرت", model: "موديل 2023", details: "مفتاح C، مناسب للمبتدئين", marketPrice: 25 },
+  { name: "مسجل (Recorder) خشبي", model: "موديل 2024", details: "مناسب للتعليم الموسيقي", marketPrice: 15 },
+  { name: "مضخم غيتار صغير محمول", model: "موديل 2024", details: "محمول، طاقة بطارية", marketPrice: 50 },
+  { name: "مترونوم رقمي", model: "موديل 2023", details: "دقة إيقاع، شاشة LED", marketPrice: 20 },
+  { name: "حامل نوتة قابل للطي", model: "موديل 2024", details: "خفيف الوزن، قابل للتعديل", marketPrice: 18 },
+  
+  // فن ومقتنيات نادرة وفاخرة
+  { name: "لوحة أصلية صغيرة لبابلو بيكاسو", model: "حوالي 1965", details: "توقيع أصلي، زيت على قماش", marketPrice: 200000 },
+  { name: "طباعة محدودة لبيكاسو", model: "1970", details: "مرقمة وموقعة، سلسلة محدودة", marketPrice: 30000 },
+  { name: "لوحة لسلفادور دالي", model: "حوالي 1945", details: "سريالية، توقيع أصلي", marketPrice: 180000 },
+  { name: "عمل فني لبانكسي (طباعة)", model: "2005", details: "مع شهادة توثيق", marketPrice: 90000 },
+  { name: "منحوتة برونزية لأوغست رودان", model: "حوالي 1905", details: "إصدار محدود، توقيع", marketPrice: 200000 },
+  { name: "ملصق سينمائي أصلي \"العراب\"", model: "1972", details: "طبعة أولى، مؤطر", marketPrice: 12000 },
+  { name: "ملصق \"حرب النجوم\" أصلي", model: "1977", details: "حالة ممتازة، نادر", marketPrice: 10000 },
+  
+  // فن ومقتنيات بأسعار معقولة
+  { name: "لوحة لفنان معاصر عربي", model: "موديل 2020", details: "80×60 سم، توقيع", marketPrice: 2000 },
+  { name: "طباعة فنية محدودة لفنان شاب", model: "موديل 2023", details: "مرقمة 1/50، ورق قطني", marketPrice: 300 },
+  { name: "بوستر موسيقي كلاسيكي", model: "1980", details: "مؤطر، حالة جيدة", marketPrice: 400 },
+  { name: "خريطة قديمة مطبوعة", model: "حوالي 1900", details: "ورق مقوى، تفاصيل دقيقة", marketPrice: 800 },
+  { name: "تمثال خشبي حرفي", model: "موديل 2022", details: "نحت يدوي، 40 سم", marketPrice: 250 },
+  { name: "صورة فوتوغرافية فنية", model: "موديل 2019", details: "طبعة 1/25، توقيع", marketPrice: 600 },
+  { name: "عمل خط عربي أصلي", model: "موديل 2021", details: "حبر ذهبي، ورق فاخر", marketPrice: 1200 },
+  { name: "طابع بريد نادر", model: "موديل 1950", details: "مجموعة قديمة، حالة ممتازة", marketPrice: 900 },
+  { name: "بطاقة تداول قديمة كرة قدم", model: "موديل 1998", details: "لاعب مشهور، حالة جيدة", marketPrice: 300 },
+  { name: "سيف تراثي مقلد فاخر", model: "موديل 2023", details: "فولاذ منقوش، غمد مزخرف", marketPrice: 700 },
+  { name: "عمل سيراميكي يدوي", model: "موديل 2022", details: "مزهرية فنية، تزجيج لامع", marketPrice: 350 },
+  { name: "لوحة أكريليك صغيرة", model: "موديل 2024", details: "30×40 سم، ألوان زاهية", marketPrice: 200 },
+  { name: "مجموعة أقلام حبر فاخرة", model: "موديل 2023", details: "قلم حبر مع محبرة", marketPrice: 250 },
+  { name: "بوستر سينمائي حديث مؤطر", model: "موديل 2015", details: "نسخة فنية، مؤطرة", marketPrice: 60 },
+  { name: "طباعة فنية ورقية غير محدودة", model: "موديل 2024", details: "حجم A3، ورق عادي", marketPrice: 20 },
+  
+  // عقارات فاخرة (تخيليًا)
+  { name: "فيلا شاطئية في ميامي", model: "موديل 2024", details: "500م²، 5 غرف، مسبح خاص", marketPrice: 5000000 },
+  { name: "بنتهاوس في دبي (برج خليفة)", model: "موديل 2023", details: "250م²، إطلالة بانورامية", marketPrice: 3000000 },
+  { name: "فيلا جبلية في سويسرا", model: "موديل 2022", details: "400م²، طراز خشبي، ساونا", marketPrice: 2800000 },
+  { name: "شقة فاخرة في باريس", model: "موديل 2023", details: "180م²، حديقة داخلية", marketPrice: 2000000 },
+  { name: "منزل حديث في لوس أنجلوس", model: "موديل 2024", details: "350م²، ذكي بالكامل", marketPrice: 2500000 },
+  
+  // عقارات متوسطة ومعقولة (تخيليًا)
+  { name: "شقة في مجمع سكني بإسطنبول", model: "موديل 2022", details: "90م²، غرفتان، مرافق مشتركة", marketPrice: 90000 },
+  { name: "شقة صغيرة في عمّان", model: "موديل 2023", details: "60م²، موقع مركزي", marketPrice: 45000 },
+  { name: "منزل ريفي صغير في توسكانا", model: "موديل 2018", details: "120م²، أرض صغيرة", marketPrice: 180000 },
+  { name: "شقة استوديو في برشلونة", model: "موديل 2021", details: "35م²، مناسب للاستثمار", marketPrice: 60000 },
+  { name: "شقة مطلة على النيل بالقاهرة", model: "موديل 2023", details: "130م²، تشطيبات ممتازة", marketPrice: 450000 },
+  
+  // وسائل نقل خاصة (طائرات/يخوت) وفاخرة
+  { name: "طائرة خاصة غلف ستريم G650", model: "موديل 2021", details: "مدى طويل، مقصورة فاخرة", marketPrice: 65000000 },
+  { name: "طائرة بومباردييه غلوبال 7500", model: "موديل 2022", details: "مدى قياسي، تصميم داخلي راقٍ", marketPrice: 73000000 },
+  { name: "يخت صن سيكر بريديتور 74", model: "موديل 2020", details: "74 قدم، تجهيزات حديثة", marketPrice: 4000000 },
+  { name: "يخت أزانتي 55 قدم", model: "موديل 2021", details: "تصميم رياضي، 3 كبائن", marketPrice: 2500000 },
+  { name: "هليكوبتر بيل 429", model: "موديل 2022", details: "مروحية خفيفة، راحة عالية", marketPrice: 7500000 },
+  
+  // وسائل نقل متوسطة ومعقولة
+  { name: "زورق جيت سكي ياماها", model: "موديل 2024", details: "ثلاثي المقاعد، محرك قوي", marketPrice: 15000 },
+  { name: "زورق جيت سكي سي-دوو", model: "موديل 2023", details: "رياضي، نظام ثبات", marketPrice: 13000 },
+  { name: "قارب صيد ألمنيوم 20 قدم", model: "موديل 2022", details: "معدات أساسية، محرك خارجي", marketPrice: 18000 },
+  { name: "يخت صغير عائلي 30 قدم", model: "موديل 2021", details: "مطبخ صغير، كبائن مريحة", marketPrice: 220000 },
+  { name: "طائرة خفيفة سيسنا 172", model: "موديل 2019", details: "تدريب/رحلات قصيرة", marketPrice: 350000 },
+  
+  // مقتنيات رياضية وتذكارات فاخرة
+  { name: "قميص موقع لليونيل ميسي", model: "موديل 2022", details: "نسخة رسمية موقعة", marketPrice: 50000 },
+  { name: "كرة قدم نهائي كأس العالم", model: "موديل 2022", details: "كرة رسمية، حالة ممتازة", marketPrice: 8000 },
+  { name: "حذاء كرة موقع لكريستيانو رونالدو", model: "موديل 2021", details: "توقيع أصلي، شهادة", marketPrice: 35000 },
+  { name: "قميص مايكل جوردان الأصلي (نهائي 1996)", model: "موديل 1996", details: "نهائي NBA، نادر", marketPrice: 200000 },
+  { name: "كرة سلة موقعه من ليبرون جيمس", model: "موديل 2016", details: "توقيع وشهادة", marketPrice: 9000 },
+  { name: "مضرب تنس موقع لرافاييل نادال", model: "موديل 2019", details: "استعمال مباراة، نادر", marketPrice: 15000 },
+  
+  // مقتنيات رياضية بأسعار معقولة
+  { name: "قميص نادي برشلونة أصلي", model: "موديل 2023", details: "إصدار رسمي، مقاس L", marketPrice: 120 },
+  { name: "قميص نادي ريال مدريد أصلي", model: "موديل 2023", details: "إصدار رسمي، مقاس M", marketPrice: 120 },
+  { name: "قفازات حارس موقعه", model: "موديل 2020", details: "حالة جيدة، توقيع لاعب", marketPrice: 400 },
+  { name: "ميدالية سباق ماراثون أصلية", model: "موديل 2018", details: "محفورة، تذكار رسمي", marketPrice: 150 },
+  { name: "بطاقة لاعب قديمة (كرة قدم)", model: "موديل 1998", details: "حالة جيدة، نادرة", marketPrice: 300 },
+  { name: "خوذة ملاكمة قديمة", model: "موديل 1985", details: "تذكار رياضي كلاسيكي", marketPrice: 250 },
+  { name: "حذاء جري محترفين إصدار محدود", model: "موديل 2024", details: "خفيف الوزن، إصدار محدود", marketPrice: 200 },
+  { name: "ساعة عدّاد سباق قديمة", model: "موديل 1970", details: "ميكانيكية، نادرة", marketPrice: 900 },
+  { name: "كرة طائرة رسمية", model: "موديل 2023", details: "ماركة معتمدة، جديدة", marketPrice: 80 },
+  
+  // تكنولوجيا نادرة وكلاسيكية
+  { name: "كمبيوتر أبل الأول (Apple I)", model: "موديل 1976", details: "لوحة أصلية، تاريخ تقني", marketPrice: 400000 },
+  { name: "كمبيوتر كومودور 64", model: "موديل 1982", details: "كلاسيكي، حالة جيدة", marketPrice: 900 },
+  { name: "جهاز أتاري 2600", model: "موديل 1977", details: "منصة ألعاب قديمة", marketPrice: 500 },
+  { name: "كاميرا لايكا M3 كلاسيكية", model: "موديل 1960", details: "فيلم 35مم، جودة ألمانية", marketPrice: 10000 },
+  { name: "كاميرا نيكون F3", model: "موديل 1980", details: "احترافية، متينة", marketPrice: 800 },
+  { name: "هاتف نوكيا 3310 أصلي", model: "موديل 2000", details: "أيقوني، يعمل بحالة جيدة", marketPrice: 70 },
+  { name: "جهاز ووكمان سوني", model: "موديل 1985", details: "كاسيت، حالة ممتازة", marketPrice: 200 },
+  { name: "مشغل ميني ديسك سوني", model: "موديل 1999", details: "تقنية قديمة نادرة", marketPrice: 150 },
+  { name: "آلة كاتبة أوليفيتي", model: "موديل 1970", details: "ميكانيكية، معدنية", marketPrice: 250 },
+  { name: "شاشة أنبوب CRT سوني", model: "موديل 1995", details: "21 بوصة، نادرة", marketPrice: 300 },
+  { name: "كاميرا بولارويد فورية", model: "موديل 1988", details: "صور فورية، كلاسيكية", marketPrice: 180 },
+  { name: "راديو جيب ترانزستور", model: "موديل 1975", details: "استقبال AM/FM", marketPrice: 120 },
+  { name: "جهاز تسجيل بكرات", model: "موديل 1968", details: "صوت تناظري، نادر", marketPrice: 1200 },
+  { name: "وحدة تحكم سيغا ميجا درايف", model: "موديل 1990", details: "ألعاب كلاسيكية", marketPrice: 250 },
+  { name: "بلايستيشن 1 أصلي", model: "موديل 1995", details: "نسخة مبكرة، حالة جيدة", marketPrice: 300 },
+  { name: "كاميرا فيديو VHS", model: "موديل 1992", details: "تسجيل منزلي، كلاسيكية", marketPrice: 220 },
+  { name: "ماوس أبل كلاسيكي", model: "موديل 1984", details: "تصميم مبكر، نادر", marketPrice: 180 },
+  { name: "طابعة نقطية", model: "موديل 1986", details: "تقنية قديمة، تعمل", marketPrice: 160 },
+  { name: "جهاز بيجر كلاسيكي", model: "موديل 1990", details: "تذكار اتصالات قديم", marketPrice: 90 },
+  { name: "لوحة أم IBM قديمة", model: "موديل 1983", details: "قطعة تقنية تاريخية", marketPrice: 400 },
+  
+  // تكنولوجيا معقولة وشائعة
+  { name: "سماعات رأس لاسلكية اقتصادية", model: "موديل 2024", details: "بلوتوث، عمر بطارية متوسط", marketPrice: 30 },
+  { name: "سماعات أذن سلكية ماركة معروفة", model: "موديل 2023", details: "جودة صوت مقبولة، قابلة للطي", marketPrice: 15 },
+  { name: "سماعات مراقبة استوديو متوسطة", model: "موديل 2023", details: "توازن نغمي، زوج", marketPrice: 500 },
+  { name: "سماعات بلوتوث رياضية", model: "موديل 2024", details: "مقاومة للماء، تثبيت أذن", marketPrice: 40 },
+  { name: "هارد ديسك خارجي 1 تيرابايت", model: "موديل 2023", details: "USB 3.0، محمول", marketPrice: 60 },
+  { name: "فلاش USB 64GB", model: "موديل 2024", details: "نقل بيانات سريع", marketPrice: 12 },
+  { name: "لوحة مفاتيح ميكانيكية اقتصادية", model: "موديل 2023", details: "إضاءة RGB، مفاتيح متوسطة", marketPrice: 45 },
+  { name: "ماوس ألعاب اقتصادي", model: "موديل 2024", details: "دقة عالية، أزرار قابلة للبرمجة", marketPrice: 25 },
+  
+  // عناصر منزلية وديكور بأسعار معقولة
+  { name: "مصباح طاولة LED ذكي", model: "موديل 2023", details: "ألوان قابلة للتعديل، تحكم باللمس", marketPrice: 35 },
+  { name: "سجادة صغيرة ديكور", model: "موديل 2024", details: "قماش صناعي، ألوان متعددة", marketPrice: 40 },
+  { name: "إطار صور خشبي 30×40 سم", model: "موديل 2024", details: "زجاج أمامي، مؤطر", marketPrice: 20 },
+  { name: "مخدة ديكور فاخرة", model: "موديل 2023", details: "قماش مخملي، حشو ناعم", marketPrice: 25 },
+  { name: "لوحة فنية مطبوعة A3", model: "موديل 2024", details: "ورق فني، إطار بسيط", marketPrice: 15 },
+  
+  // ألعاب ومجموعات بأسعار معقولة
+  { name: "مجموعة LEGO صغيرة (500 قطعة)", model: "موديل 2023", details: "سلسلة عامة، قطع بلاستيكية", marketPrice: 60 },
+  { name: "مجموعة LEGO Millennium Falcon (نسخة صغيرة)", model: "موديل 2018", details: "نسخة مصغرة، عدد قطع أقل", marketPrice: 80 },
+  { name: "لعبة لوحية عائلية", model: "موديل 2022", details: "4-6 لاعبين، قواعد بسيطة", marketPrice: 30 },
+  { name: "بطاقة تداول شائعة", model: "موديل 2020", details: "نسخة تجارية، حالة جيدة", marketPrice: 5 },
+  { name: "دمية جمع بسيطة", model: "موديل 2023", details: "حجم صغير، مواد آمنة", marketPrice: 12 },
+  
+  // أدوات وهوايات بأسعار معقولة
+  { name: "عدة رسم أساسية (أقلام وألوان)", model: "موديل 2024", details: "مجموعة للمبتدئين، حقيبة قماش", marketPrice: 25 },
+  { name: "مجموعة خياطة منزلية", model: "موديل 2023", details: "إبر، خيوط، أزرار", marketPrice: 10 },
+  { name: "عدة صيانة دراجات بسيطة", model: "موديل 2024", details: "مفاتيح ومضخة صغيرة", marketPrice: 30 },
+  { name: "مجموعة صيد بسيطة", model: "موديل 2022", details: "قصبة، بكرة، خيوط", marketPrice: 45 },
+  
+  // إضافات صغيرة متنوعة
+  { name: "كتاب ورقي شائع (رواية)", model: "طبعة حديثة", details: "ورقي، حالة جديدة", marketPrice: 12 },
+  { name: "مذكرة جلدية صغيرة", model: "موديل 2024", details: "ورق عالي الجودة، غلاف جلد صناعي", marketPrice: 18 },
+  { name: "قلم حبر فاخر اقتصادي", model: "موديل 2023", details: "تصميم أنيق، حبر أسود", marketPrice: 15 },
+  { name: "محفظة جلد صغيرة", model: "موديل 2024", details: "جيوب بطاقات، جلد صناعي", marketPrice: 20 },
+  { name: "نظارة شمسية ماركة متوسطة", model: "موديل 2023", details: "حماية UV، تصميم عصري", marketPrice: 35 }
+];
+
+// -------------------- حالة اللعبة --------------------
+let gameState = {
+  players: [],
+  items: [],
+  currentIndex: 0,
+  settingsOpen: true,
+  autoBudget: false,
+  openingPercent: 65,
+  playerNames: [], // لتخزين أسماء اللاعبين المخصصة
+  lastTransactionData: null // لتخزين بيانات آخر صفقة
+};
+
+// عناصر DOM
+const settingsPanel = document.getElementById('settingsPanel');
+const startBtn = document.getElementById('startBtn');
+const loadSampleBtn = document.getElementById('loadSample');
+const gameArea = document.getElementById('gameArea');
+const openSettings = document.getElementById('openSettings');
+const setupPlayerNamesBtn = document.getElementById('setupPlayerNames');
+const editPlayerNamesBtn = document.getElementById('editPlayerNames');
+const playerNamesModal = document.getElementById('playerNamesModal');
+const playerNamesContainer = document.getElementById('playerNamesContainer');
+const cancelPlayerNamesBtn = document.getElementById('cancelPlayerNames');
+const savePlayerNamesBtn = document.getElementById('savePlayerNames');
+
+const itemNameEl = document.getElementById('itemName');
+const itemModelEl = document.getElementById('itemModel');
+const itemDetailsEl = document.getElementById('itemDetails');
+const marketPriceEl = document.getElementById('marketPrice');
+const openingPriceEl = document.getElementById('openingPrice');
+const copyItemBtn = document.getElementById('copyItemBtn');
+const toggleShowMarket = document.getElementById('toggleShowMarket');
+
+const winnerSelect = document.getElementById('winnerSelect');
+const paidPriceInput = document.getElementById('paidPrice');
+const settleBtn = document.getElementById('settleBtn');
+const resultArea = document.getElementById('resultArea');
+const nextBtn = document.getElementById('nextBtn');
+const prevBtn = document.getElementById('prevBtn');
+
+const playersContainer = document.getElementById('playersContainer');
+const remainingCountEl = document.getElementById('remainingCount');
+const totalPlayersEl = document.getElementById('totalPlayers');
+const totalItemsEl = document.getElementById('totalItems');
+const currentItemNumberEl = document.getElementById('currentItemNumber');
+
+const playersCountInput = document.getElementById('playersCount');
+const itemsCountInput = document.getElementById('itemsCount');
+const budgetPerPlayerInput = document.getElementById('budgetPerPlayer');
+const autoBudgetMode = document.getElementById('autoBudgetMode');
+const openingPercentInput = document.getElementById('openingPercent');
+
+const addPlayerBtn = document.getElementById('addPlayerBtn');
+const newPlayerName = document.getElementById('newPlayerName');
+const newPlayerBudget = document.getElementById('newPlayerBudget');
+
+// -------------------- وظائف مساعدة --------------------
+function shuffleArray(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function formatCurrency(n) {
+  if (n === null || n === undefined) return '—';
+  return n.toLocaleString('en-US') + ' دولار';
+}
+
+// -------------------- ميزة تسجيل أسماء اللاعبين --------------------
+setupPlayerNamesBtn.addEventListener('click', () => {
+  const playersCount = parseInt(playersCountInput.value) || 0;
+  if (playersCount <= 0) {
+    alert('⚠️ يرجى تحديد عدد اللاعبين أولاً');
+    return;
+  }
+  
+  showPlayerNamesModal(playersCount);
+});
+
+editPlayerNamesBtn.addEventListener('click', () => {
+  if (gameState.players.length === 0) {
+    alert('⚠️ لا يوجد لاعبين لتعديل أسمائهم');
+    return;
+  }
+  
+  showPlayerNamesModal(gameState.players.length, true);
+});
+
+function showPlayerNamesModal(count, isEdit = false) {
+  playerNamesContainer.innerHTML = '';
+  
+  if (isEdit) {
+    // تعديل أسماء اللاعبين الحاليين
+    for (let i = 0; i < count; i++) {
+      const player = gameState.players[i];
+      const div = document.createElement('div');
+      div.style.marginBottom = '15px';
+      div.innerHTML = `
+        <label>اسم اللاعب ${i + 1}</label>
+        <input type="text" class="player-name-input" data-index="${i}" 
+               placeholder="مثال: محمد" value="${player ? player.name : ''}" 
+               style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--light-border); font-size: 16px;">
+      `;
+      playerNamesContainer.appendChild(div);
+    }
+  } else {
+    // إعداد أسماء جديدة
+    for (let i = 0; i < count; i++) {
+      const div = document.createElement('div');
+      div.style.marginBottom = '15px';
+      div.innerHTML = `
+        <label>اسم اللاعب ${i + 1}</label>
+        <input type="text" class="player-name-input" data-index="${i}" 
+               placeholder="مثال: محمد" value="لاعب ${i + 1}" 
+               style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--light-border); font-size: 16px;">
+      `;
+      playerNamesContainer.appendChild(div);
+    }
+  }
+  
+  playerNamesModal.style.display = 'flex';
+}
+
+cancelPlayerNamesBtn.addEventListener('click', () => {
+  playerNamesModal.style.display = 'none';
+});
+
+savePlayerNamesBtn.addEventListener('click', () => {
+  const inputs = playerNamesContainer.querySelectorAll('.player-name-input');
+  gameState.playerNames = [];
+  
+  inputs.forEach(input => {
+    const name = input.value.trim();
+    if (name) {
+      gameState.playerNames.push(name);
+    } else {
+      gameState.playerNames.push(`لاعب ${parseInt(input.dataset.index) + 1}`);
+    }
+  });
+  
+  playerNamesModal.style.display = 'none';
+  
+  // إشعار النجاح
+  savePlayerNamesBtn.innerHTML = '✅ تم الحفظ';
+  setTimeout(() => {
+    savePlayerNamesBtn.innerHTML = '💾 حفظ الأسماء';
+  }, 1500);
+});
+
+// -------------------- وظيفة نسخ نتيجة الصفقة --------------------
+function buildTransactionCopyText(transactionData) {
+  const { playerName, itemName, paidPrice, marketPrice, profit } = transactionData;
+  const profitAbs = Math.abs(profit);
+  const isProfit = profit >= 0;
+  
+  return `ألعاب -𖤍|𝐑𝐄𝐃𝐒𝐖𝐎𝐑𝐃
+لعبة المزاد
+-----------------------
+نتيجة الصفقة الحالية:
+${isProfit ? '🟢' : '🔴'}
+التاجر "${playerName}" اشترى ${itemName}
+اشترى بسعر ${formatCurrency(paidPrice)}
+وباعها بسعر ${formatCurrency(marketPrice)}
+${isProfit ? 'وربح' : 'وخسر'} ${formatCurrency(profitAbs)} ${isProfit ? 'من هذه الصفقة.' : 'من هذه الصفقة'}
+-------------------`;
+}
+
+function createCopyResultButton(transactionData) {
+  const button = document.createElement('button');
+  button.className = 'copy-result-btn';
+  button.innerHTML = '📋 نسخ نتيجة الصفقة الحالية';
+  
+  button.addEventListener('click', () => {
+    const text = buildTransactionCopyText(transactionData);
+    navigator.clipboard.writeText(text).then(() => {
+      button.innerHTML = '✅ تم نسخ نتيجة الصفقة';
+      button.style.background = '#10b981';
+      
+      setTimeout(() => {
+        button.innerHTML = '📋 نسخ نتيجة الصفقة الحالية';
+        button.style.background = '';
+      }, 2000);
+    }).catch(() => {
+      alert('❌ فشل نسخ نتيجة الصفقة. تأكد من أذونات المتصفح.');
+    });
+  });
+  
+  return button;
+}
+
+// -------------------- إعداد وبدء المزاد --------------------
+startBtn.addEventListener('click', () => {
+  console.log('زر بدء المزاد تم النقر عليه');
+  
+  // قراءة الإعدادات
+  const playersCount = parseInt(playersCountInput.value) || 0;
+  const itemsCount = parseInt(itemsCountInput.value) || 20;
+  const budgetPerPlayer = parseFloat(budgetPerPlayerInput.value) || 50000;
+  const autoBudget = autoBudgetMode.value === 'yes';
+  const openingPercent = parseFloat(openingPercentInput.value) || 65;
+
+  console.log('الإعدادات:', { playersCount, itemsCount, budgetPerPlayer, autoBudget, openingPercent });
+
+  gameState.openingPercent = openingPercent;
+  gameState.autoBudget = autoBudget;
+
+  // تهيئة العناصر (نسخة عشوائية)
+  let itemsPool = shuffleArray(ITEMS);
+  if (itemsCount && itemsCount > 0) {
+    itemsPool = itemsPool.slice(0, Math.min(itemsCount, ITEMS.length));
+  }
+  
+  console.log('عدد العناصر بعد التهيئة:', itemsPool.length);
+  
+  if (itemsPool.length === 0) {
+    alert('❌ خطأ: لا توجد عناصر للعرض!');
+    return;
+  }
+  
+  gameState.items = itemsPool;
+  console.log('العناصر تم تحميلها:', gameState.items.length, 'عنصر');
+
+  // تهيئة اللاعبين مع الأسماء المخصصة إن وجدت
+  gameState.players = [];
+  if (playersCount > 0) {
+    for (let i = 1; i <= playersCount; i++) {
+      let name;
+      if (gameState.playerNames.length >= i) {
+        // استخدام الأسماء المخصصة إذا كانت متاحة
+        name = gameState.playerNames[i - 1];
+      } else {
+        // استخدام الأسماء الافتراضية
+        name = 'لاعب ' + i;
+      }
+      let balance = budgetPerPlayer;
+      gameState.players.push({ id: i, name, balance });
+    }
+  }
+
+  // إعادة تعيين المؤشر
+  gameState.currentIndex = 0;
+  
+  // تحديث الواجهات
+  renderPlayers();
+  prepareWinnerSelect();
+  renderCurrentItem();
+  updateStats();
+
+  // إظهار واجهة اللعبة وإخفاء الإعدادات
+  settingsPanel.style.display = 'none';
+  gameArea.style.display = 'grid';
+  gameState.settingsOpen = false;
+  
+  console.log('المزاد بدأ بنجاح');
+  alert(`✅ بدأ المزاد بـ ${itemsPool.length} عنصر و ${gameState.players.length} لاعب`);
+});
+
+// زر تحميل عيّنة سريعة
+loadSampleBtn.addEventListener('click', () => {
+  playersCountInput.value = 4;
+  itemsCountInput.value = 20;
+  budgetPerPlayerInput.value = 50000;
+  autoBudgetMode.value = 'no';
+  openingPercentInput.value = 65;
+  
+  loadSampleBtn.innerHTML = '✅ تم التحميل';
+  setTimeout(() => {
+    loadSampleBtn.innerHTML = '📦 تحميل عيّنة سريعة';
+  }, 1500);
+});
+
+// فتح الإعدادات أثناء اللعب
+openSettings.addEventListener('click', () => {
+  if (gameState.settingsOpen) {
+    settingsPanel.style.display = 'none';
+    gameState.settingsOpen = false;
+  } else {
+    settingsPanel.style.display = 'block';
+    gameState.settingsOpen = true;
+  }
+});
+
+// -------------------- عرض العنصر الحالي --------------------
+let showMarket = true;
+toggleShowMarket.addEventListener('click', () => {
+  showMarket = !showMarket;
+  marketPriceEl.style.opacity = showMarket ? '1' : '0.3';
+  toggleShowMarket.innerHTML = showMarket ? '👁️ إخفاء السعر الحقيقي' : '👁️ إظهار السعر الحقيقي';
+});
+
+function renderCurrentItem() {
+  const idx = gameState.currentIndex;
+  console.log('عرض العنصر رقم:', idx);
+  
+  if (!gameState.items || gameState.items.length === 0) {
+    console.log('لا توجد عناصر للعرض');
+    itemNameEl.textContent = 'لا توجد عناصر للعرض';
+    itemModelEl.textContent = '';
+    itemDetailsEl.textContent = 'أضف عناصر أو حمّل عيّنة ثم ابدأ المزاد.';
+    marketPriceEl.textContent = '—';
+    openingPriceEl.textContent = '—';
+    remainingCountEl.textContent = 0;
+    currentItemNumberEl.textContent = '0/0';
+    return;
+  }
+  
+  const it = gameState.items[idx];
+  console.log('العنصر الحالي:', it);
+  
+  itemNameEl.textContent = it.name;
+  itemModelEl.textContent = it.model;
+  itemDetailsEl.textContent = it.details;
+  marketPriceEl.textContent = formatCurrency(it.marketPrice);
+  
+  // حساب سعر الافتتاح من النسبة
+  const opening = Math.round(it.marketPrice * (gameState.openingPercent / 100));
+  openingPriceEl.textContent = formatCurrency(opening);
+  
+  // تحديث الإحصائيات
+  updateStats();
+  
+  // إعادة تعيين نتيجة الصفقة الحالية
+  resultArea.innerHTML = '';
+  paidPriceInput.value = '';
+  winnerSelect.value = '';
+  gameState.lastTransactionData = null;
+}
+
+// -------------------- نسخ وصف القطعة --------------------
+copyItemBtn.addEventListener('click', () => {
+  const it = gameState.items[gameState.currentIndex];
+  if (!it) return;
+  
+  const text = `ألعاب -𖤍|𝐑𝐄𝐃𝐒𝐖𝐎𝐑𝐃
+لعبة المزاد
+-----------------------
+القطعة الحالية المعروضة:
+
+${it.name}
+${it.model}
+${it.details}
+-------------------`;
+  
+  navigator.clipboard.writeText(text).then(() => {
+    copyItemBtn.innerHTML = '✅ تم النسخ';
+    setTimeout(() => {
+      copyItemBtn.innerHTML = '📋 نسخ وصف القطعة';
+    }, 1500);
+  }).catch(() => {
+    alert('❌ فشل النسخ. تأكد من أذونات المتصفح.');
+  });
+});
+
+// -------------------- إدارة اللاعبين --------------------
+function renderPlayers() {
+  playersContainer.innerHTML = '';
+  
+  if (gameState.players.length === 0) {
+    const emptyMsg = document.createElement('div');
+    emptyMsg.style.cssText = 'text-align: center; padding: 40px 20px; color: var(--muted);';
+    emptyMsg.innerHTML = `
+      <div style="font-size: 48px; margin-bottom: 16px;">👤</div>
+      <div style="font-weight: 500; margin-bottom: 8px;">لا يوجد لاعبين حالياً</div>
+      <div style="font-size: 14px;">أضف لاعبين يدوياً أو اضبط الإعدادات</div>
+    `;
+    playersContainer.appendChild(emptyMsg);
+    return;
+  }
+  
+  gameState.players.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'player-item';
+    div.innerHTML = `
+      <div>
+        <div class="player-name">${p.name}</div>
+        <div class="muted" style="font-size: 12px;">معرف: ${p.id}</div>
+      </div>
+      <div style="text-align: left;">
+        <div class="player-balance" style="font-size: 16px; font-weight: 700; color: var(--accent);">
+          ${formatCurrency(p.balance)}
+        </div>
+      </div>
+    `;
+    playersContainer.appendChild(div);
+  });
+  
+  totalPlayersEl.textContent = gameState.players.length;
+}
+
+// إضافة لاعب جديد يدوياً
+addPlayerBtn.addEventListener('click', () => {
+  const name = newPlayerName.value.trim();
+  const bud = parseFloat(newPlayerBudget.value) || 50000;
+  
+  if (!name) {
+    alert('❌ يرجى إدخال اسم اللاعب');
+    newPlayerName.focus();
+    return;
+  }
+  
+  const id = gameState.players.length ? Math.max(...gameState.players.map(p => p.id)) + 1 : 1;
+  gameState.players.push({ id, name, balance: bud });
+  
+  newPlayerName.value = '';
+  newPlayerBudget.value = '';
+  
+  renderPlayers();
+  prepareWinnerSelect();
+  updateStats();
+  
+  addPlayerBtn.innerHTML = '✅ تمت الإضافة';
+  setTimeout(() => {
+    addPlayerBtn.innerHTML = '➕ إضافة';
+  }, 1500);
+});
+
+// إعداد قائمة اختيار الفائز
+function prepareWinnerSelect() {
+  winnerSelect.innerHTML = '<option value="">-- اختر لاعباً --</option>';
+  
+  gameState.players.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.id;
+    opt.textContent = `${p.name} — ${formatCurrency(p.balance)}`;
+    winnerSelect.appendChild(opt);
+  });
+}
+
+// -------------------- تسوية الصفقة --------------------
+settleBtn.addEventListener('click', () => {
+  const winnerId = parseInt(winnerSelect.value);
+  if (!winnerId) {
+    alert('❌ يرجى اختيار اللاعب الفائز أولاً');
+    winnerSelect.focus();
+    return;
+  }
+  
+  const paid = parseFloat(paidPriceInput.value);
+  if (isNaN(paid) || paid < 0) {
+    alert('❌ يرجى إدخال سعر صحيح دفعه الفائز');
+    paidPriceInput.focus();
+    return;
+  }
+  
+  const player = gameState.players.find(p => p.id === winnerId);
+  if (!player) return alert('❌ لاعب غير موجود');
+  
+  const it = gameState.items[gameState.currentIndex];
+  if (!it) return alert('❌ لا توجد قطعة حالية');
+  
+  // تطبيق الحساب
+  const oldBalance = player.balance;
+  player.balance = Math.round((player.balance - paid + it.marketPrice) * 100) / 100;
+  
+  // حساب الربح/الخسارة
+  const profit = Math.round((it.marketPrice - paid) * 100) / 100;
+  
+  // حفظ بيانات الصفقة لاستخدامها في نسخ النتيجة
+  gameState.lastTransactionData = {
+    playerName: player.name,
+    itemName: it.name,
+    paidPrice: paid,
+    marketPrice: it.marketPrice,
+    profit: profit
+  };
+  
+  // عرض النتيجة في الواجهة
+  const box = document.createElement('div');
+  box.className = profit >= 0 ? 'result-box' : 'danger-box';
+  box.innerHTML = `
+    <div style="display: flex; align-items: center; margin-bottom: 12px;">
+      <div style="font-size: 24px; margin-left: 12px;">${profit >= 0 ? '💰' : '⚠️'}</div>
+      <div>
+        <div style="font-weight: 700; font-size: 16px;">${player.name}</div>
+        <div style="font-size: 14px; margin-top: 4px;">دفع: ${formatCurrency(paid)}</div>
+      </div>
+    </div>
+    <div style="border-top: 1px solid ${profit >= 0 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'}; padding-top: 12px;">
+      <div style="display: flex; justify-content: space-between;">
+        <span>سعر السوق:</span>
+        <span style="font-weight: 700;">${formatCurrency(it.marketPrice)}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+        <span>${profit >= 0 ? 'الربح' : 'الخسارة'}:</span>
+        <span style="font-weight: 700; color: ${profit >= 0 ? '#10b981' : '#ef4444'}">
+          ${profit >= 0 ? '+' : ''}${formatCurrency(profit)}
+        </span>
+      </div>
+    </div>
+  `;
+  
+  resultArea.innerHTML = '';
+  resultArea.appendChild(box);
+  
+  // إضافة زر نسخ نتيجة الصفقة
+  const copyResultBtn = createCopyResultButton(gameState.lastTransactionData);
+  resultArea.appendChild(copyResultBtn);
+  
+  // تحديث واجهة اللاعبين
+  renderPlayers();
+  prepareWinnerSelect();
+  
+  settleBtn.innerHTML = '✅ تم التطبيق';
+  setTimeout(() => {
+    settleBtn.innerHTML = '✅ حساب وتطبيق الصفقة';
+  }, 1500);
+});
+
+// -------------------- التنقل بين العناصر --------------------
+nextBtn.addEventListener('click', () => {
+  if (gameState.currentIndex < gameState.items.length - 1) {
+    gameState.currentIndex++;
+    renderCurrentItem();
+  } else {
+    alert('🎉 انتهت العناصر المعروضة! يمكنك البدء من جديد.');
+  }
+});
+
+prevBtn.addEventListener('click', () => {
+  if (gameState.currentIndex > 0) {
+    gameState.currentIndex--;
+    renderCurrentItem();
+  }
+});
+
+function updateStats() {
+  remainingCountEl.textContent = Math.max(0, gameState.items.length - gameState.currentIndex - 1);
+  totalPlayersEl.textContent = gameState.players.length;
+  totalItemsEl.textContent = gameState.items.length;
+  currentItemNumberEl.textContent = `${gameState.currentIndex + 1}/${gameState.items.length}`;
+}
+
+// -------------------- بدء افتراضي --------------------
+(function init() {
+  // إظهار الإعدادات افتراضيًا
+  settingsPanel.style.display = 'block';
+  gameArea.style.display = 'none';
+  gameState.settingsOpen = true;
+  
+  // تعيين قيم افتراضية
+  openingPercentInput.value = 65;
+  
+  // اختبار سريع عند التحميل
+  console.log('التطبيق جاهز للاستخدام');
+})();
+</script>
+</body>
+</html>
